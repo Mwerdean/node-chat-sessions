@@ -1,11 +1,22 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mc = require( `./controllers/messages_controller` );
+require('dotenv').config()
+const session = reqiure('express-session')
+
+const  createInitialSession = require('./middlewares/session.js')
 
 const app = express();
 
 app.use( bodyParser.json() );
 app.use( express.static( `${__dirname}/../build` ) );
+app.use(Session({
+    secret:process.env.SESSION_SECRET,
+    resave:false,
+    saveUninitialized:true,
+    cookie: {maxAge:10000}
+}))
+app.use(createInitialSession)
 
 const messagesBaseUrl = "/api/messages";
 app.post( messagesBaseUrl, mc.create );
